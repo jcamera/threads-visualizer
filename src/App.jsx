@@ -36,11 +36,30 @@ const seedData = [
 ];
 
 function threadsReducer(state, action) {
-  return state;
+  switch (action.type) {
+    case 'new': 
+      return [...state, {
+        id: state.length + 1,
+        ...action.data
+      }];
+    case 'edit':
+      return state.map( thread => {
+        if (thread.id == action.data?.id) {
+          return action.data;
+        }
+        else {
+          return thread;
+        }
+      })
+    case 'delete':
+      return state.filter( thread => thread.id != action.data?.id);
+    default:
+      return state
+  }
 }
 
 function App() {
-  const [threadState, threadsDispatch] = useReducer(threadsReducer, seedData)
+  const [threadState, threadDispatch] = useReducer(threadsReducer, seedData)
 
   return (
     <>
@@ -52,7 +71,7 @@ function App() {
           <GraphView data={threadState} />
         </Grid>
         <Grid item xs={12} md={9} >
-          <TableView data={threadState} />
+          <TableView data={threadState} dispatch={threadDispatch}/>
         </Grid>
       </Grid>
     </>
