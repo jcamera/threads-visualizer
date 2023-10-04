@@ -1,10 +1,10 @@
-import { useReducer } from 'react'
+import { useReducer, useState } from 'react'
 import './App.css'
 import TableView from './TableView';
 import GraphView from './GraphView';
 import ThreadForm from './ThreadForm';
 import Grid from '@mui/material/Grid';
-import { generateThreads } from './helpers';
+import { generateThreads, getNewRowDefault } from './helpers';
 
 
 const seedData = generateThreads(10);
@@ -13,8 +13,7 @@ function threadsReducer(state, action) {
   switch (action.type) {
     case 'new': 
       return [...state, {
-        id: state.length + 1, //todo: change to guid
-        ...action.data
+        ...getNewRowDefault()
       }];
     case 'edit':
       return state.map( thread => {
@@ -34,19 +33,30 @@ function threadsReducer(state, action) {
 
 function App() {
   const [threadState, threadDispatch] = useReducer(threadsReducer, seedData)
+  const [filteredRows, setFilteredRows] = useState(null);
+  //const [sortField, setSortField] = useState(null);
+
+  const filteredData = filteredRows ? threadState.filter( row => filteredRows.includes(row.id)) : null;
 
   return (
     <>
       <h3>threads visualizer</h3>
     
-
       <Grid container spacing={8} sx={{ justifyContent: 'space-evenly' }}>
         <Grid item xs={12} md={12} sx={{ height: '50vh' }}>
-          <GraphView data={threadState} />
+          <GraphView 
+            data={filteredData ?? threadState} 
+            //sortField={sortField}
+          />
         </Grid>
         <Grid container item spacing={2}>
           <Grid item xs={12} md={7}>
-            <TableView data={threadState} dispatch={threadDispatch}/>
+            <TableView 
+              data={threadState} 
+              dispatch={threadDispatch} 
+              setFilteredRows={setFilteredRows}
+              //setSortField={setSortField}
+            />
           </Grid>
           <Grid item xs={12} md={5}>
             <ThreadForm dispatch={threadDispatch}/>

@@ -1,11 +1,14 @@
-import { DataGrid, GridActionsCellItem } from '@mui/x-data-grid';
+import { DataGrid, GridActionsCellItem, gridFilteredSortedRowIdsSelector } from '@mui/x-data-grid';
 import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import Button from '@mui/material/Button';
 import AddIcon from '@mui/icons-material/Add';
 import { getColumns } from './helpers';
+import { useState } from 'react';
 
 
-export default function TableView({data, dispatch}) {
+export default function TableView({data, dispatch, setFilteredRows, setSortField}) {
+
+    const [filterApplied, setFilterApplied] = useState(false)
 
     const handleDeleteClick = (id) => () => {
         dispatch({
@@ -46,6 +49,22 @@ export default function TableView({data, dispatch}) {
         })
       }
 
+    const handleFilterModeChange = (model, details) => {
+        console.log({model, details})
+        setFilterApplied( model.items?.length > 0 && model.items[0]?.value );
+    }
+
+    const handleStateChange = (state) => {
+        if (filterApplied) {
+            const filteredRows = gridFilteredSortedRowIdsSelector(state);
+            setFilteredRows(filteredRows);
+        }
+    }
+
+    // const handleSortModeChange = (model) => {
+    //     setSortField( model?.length > 0 ? model[0]?.field : null );
+    // }
+
     return (
       <div style={{ height: '100%', width: '100%' }}>
         <DataGrid 
@@ -55,6 +74,9 @@ export default function TableView({data, dispatch}) {
           editMode="row"
           processRowUpdate={handleRowUpdate}
           onProcessRowUpdateError={(e) => console.log('process row error: ', e)}
+          onFilterModelChange={handleFilterModeChange}
+          onStateChange={handleStateChange}
+          //onSortModelChange={handleSortModeChange}
         />
         <Button color="primary" startIcon={<AddIcon />} onClick={handleNewRow}>
             Add thread

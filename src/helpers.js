@@ -16,7 +16,7 @@ export function generateThreads(n) {
     for (let i=0; i<n; i++) {
         threads.push({
             id: uuidv4(),
-            created: new Date( maxDate.getTime() + Math.random() * (maxDate.getTime() - minDate.getTime())),
+            created: new Date( minDate.getTime() + Math.random() * (maxDate.getTime() - minDate.getTime())),
             source: pickRandom(sourceOptions), 
             content: loremTweet,
             topic: pickRandom(topics),

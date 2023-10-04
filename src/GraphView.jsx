@@ -1,6 +1,6 @@
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
-export default function GraphView({data}) {
+export default function GraphView({data, sortField}) {
     return (
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart
@@ -15,7 +15,7 @@ export default function GraphView({data}) {
           }}
         >
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="created" />
+          <XAxis dataKey={'created'} />
           <YAxis />
           <Tooltip />
           <Area type="monotone" dataKey="numFollowers" stackId="1" stroke="#8884d8" fill="#8884d8" />
