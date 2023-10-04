@@ -4,44 +4,79 @@ import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import dayjs from 'dayjs';
 
+const fieldNames = ['created', 'source', 'content', 'topic', 'numFollowers', 'numFollowing'];
 
-export default function ThreadForm({dispatch}) {
+export default function ThreadForm({dispatch, selectedRow}) {
 
-    const [createdTime, setCreatedTime] = useState();
-    const [source, setSource] = useState('web');
     const formRef = useRef(null);
+    const [formValues, setFormValues] = useState({});
+    const [isNew, setIsNew] = useState(true);
 
     function handleSubmit(e) {
         e.preventDefault();
-        dispatch({
-            type: 'new',
-            data: {
-                created: createdTime.toDate(),
-                source,
-                content: e.target.content.value,
-                topic: e.target.topic.value,
-                numFollowers: e.target.numFollowers.value,
-                numFollowing: e.target.numFollowing.value,
-            }
-        })
-        //formRef.current.reset();
+        if (isNew) {
+            dispatch({
+                type: 'new',
+                data: {
+                    ...formValues,
+                    created: formValues.created.toDate(),
+                }
+            })
+        }
+        else {
+            //edit
+            dispatch({
+                type: 'edit',
+                data: {
+                    ...formValues,
+                    id: selectedRow.id
+                 } 
+            })
+        }
         e.target.reset();
-        setCreatedTime(null);
-        setSource('web');
+    }
 
+    useEffect( () => {
+        if (selectedRow) {
+            setFormValues({...selectedRow});
+            setIsNew(false);
+        }
+    }, [selectedRow, formRef])
+
+    const handleChangeValue = (fieldName) => (e) => {
+        setFormValues({
+            ...formValues,
+            [fieldName]: e.target.value
+        })
+    }
+
+    const handleChangeCreated = (newValue) => {
+        setFormValues({
+            ...formValues,
+            created: newValue
+        })
+    }
+
+    const handleClear = () => {
+        setFormValues({});
+        setIsNew(true);
     }
 
     return (
         <div className="formContainer">
             <form onSubmit={handleSubmit} ref={formRef}>
                 <DateTimePicker 
-                    id="source" 
+                    id="created" 
                     label="created" 
                     className="formField"
-                    onChange={(newValue) => setCreatedTime(newValue)}
+                    name="created"
+                    value={formValues.created ? dayjs(formValues.created) : null}
+                    //value={dayjs(formValues.created) ?? null}
+                    onChange={handleChangeCreated}
                 />
                 <FormControl sx={{ m:.75, minWidth: 95 }}>
                     <InputLabel id="source-label">source</InputLabel>
@@ -50,8 +85,9 @@ export default function ThreadForm({dispatch}) {
                         labelId="source-label" 
                         label="source" 
                         variant="outlined" 
-                        value={source}
-                        onChange={ e => setSource(e.target.value)}
+                        name="source"
+                        value={formValues.source ?? ''}
+                        onChange={handleChangeValue('source')}
                     >
                         <MenuItem value={'web'}>web</MenuItem>
                         <MenuItem value={'mobile'}>mobile</MenuItem>
@@ -64,12 +100,18 @@ export default function ThreadForm({dispatch}) {
                     variant="outlined" 
                     multiline 
                     className="formField"
+                    name="content"
+                    value={formValues.content ?? ''}
+                    onChange={handleChangeValue('content')}
                 />
                 <TextField 
                     id="topic" 
                     label="topic" 
                     variant="outlined" 
                     className="formField"
+                    name="topic"
+                    value={formValues.topic ?? ''}
+                    onChange={handleChangeValue('topic')}
                 />
                 <TextField 
                     id="numFollowers" 
@@ -77,6 +119,9 @@ export default function ThreadForm({dispatch}) {
                     variant="outlined" 
                     className="formField" 
                     inputProps={{ type: 'number'}}
+                    name="numFollowers"
+                    value={formValues.numFollowers ?? 0}
+                    onChange={handleChangeValue('numFollowers')}
                 />
                 <TextField 
                     id="numFollowing" 
@@ -84,11 +129,21 @@ export default function ThreadForm({dispatch}) {
                     variant="outlined" 
                     className="formField" 
                     inputProps={{ type: 'number'}}
+                    name="numFollowing"
+                    value={formValues.numFollowing ?? 0}
+                    onChange={handleChangeValue('numFollowing')}
                 />
                 <div>
-                    <Button variant="outlined" type="submit" className="submitButton">
-                        add new
+                    <Button variant="outlined" type="submit" className="formButton">
+                        { !isNew ? 'edit thread' : 'new thread' }
                     </Button>
+                    {
+                        !isNew ? (
+                            <Button variant="text" onClick={handleClear} className="formButton">
+                                clear
+                            </Button>
+                        ) : null
+                    }
                 </div>
             </form>
         </div>

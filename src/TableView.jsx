@@ -2,11 +2,11 @@ import { DataGrid, GridActionsCellItem, gridFilteredSortedRowIdsSelector } from 
 import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import Button from '@mui/material/Button';
 import AddIcon from '@mui/icons-material/Add';
-import { getColumns } from './helpers';
+import { getColumns, getNewRowDefault } from './helpers';
 import { useState } from 'react';
 
 
-export default function TableView({data, dispatch, setFilteredRows, setSortField}) {
+export default function TableView({data, dispatch, setFilteredRows, setSelectedRow, setSortField}) {
 
     const [filterApplied, setFilterApplied] = useState(false)
 
@@ -38,14 +38,7 @@ export default function TableView({data, dispatch, setFilteredRows, setSortField
       const handleNewRow = () => {
         dispatch({
           type: 'new',
-          data: {
-            created: new Date(),
-            source: 'web',
-            content: '',
-          topic: '',
-            numFollowers: 0,
-            numFollowing: 0,
-          }
+          data: {...getNewRowDefault()}
         })
       }
 
@@ -59,6 +52,10 @@ export default function TableView({data, dispatch, setFilteredRows, setSortField
             const filteredRows = gridFilteredSortedRowIdsSelector(state);
             setFilteredRows(filteredRows);
         }
+    }
+
+    const handleRowSelectionModelChange = (ids) => {
+        setSelectedRow( ids?.length > 0 ? ids[0] : null);
     }
 
     // const handleSortModeChange = (model) => {
@@ -77,6 +74,7 @@ export default function TableView({data, dispatch, setFilteredRows, setSortField
           onFilterModelChange={handleFilterModeChange}
           onStateChange={handleStateChange}
           //onSortModelChange={handleSortModeChange}
+          onRowSelectionModelChange={handleRowSelectionModelChange}
         />
         <Button color="primary" startIcon={<AddIcon />} onClick={handleNewRow}>
             Add thread

@@ -5,6 +5,8 @@ import GraphView from './GraphView';
 import ThreadForm from './ThreadForm';
 import Grid from '@mui/material/Grid';
 import { generateThreads, getNewRowDefault } from './helpers';
+import { v4 as uuidv4 } from 'uuid';
+
 
 
 const seedData = generateThreads(10);
@@ -13,7 +15,8 @@ function threadsReducer(state, action) {
   switch (action.type) {
     case 'new': 
       return [...state, {
-        ...getNewRowDefault()
+        id: uuidv4(),
+        ...action.data
       }];
     case 'edit':
       return state.map( thread => {
@@ -35,8 +38,10 @@ function App() {
   const [threadState, threadDispatch] = useReducer(threadsReducer, seedData)
   const [filteredRows, setFilteredRows] = useState(null);
   //const [sortField, setSortField] = useState(null);
+  const [selectedRow, setSelectedRow] = useState(null);
 
   const filteredData = filteredRows ? threadState.filter( row => filteredRows.includes(row.id)) : null;
+  const selectedRowData = selectedRow ? threadState.find( row => row.id == selectedRow) : null; 
 
   return (
     <>
@@ -56,10 +61,14 @@ function App() {
               dispatch={threadDispatch} 
               setFilteredRows={setFilteredRows}
               //setSortField={setSortField}
+              setSelectedRow={setSelectedRow}
             />
           </Grid>
           <Grid item xs={12} md={5}>
-            <ThreadForm dispatch={threadDispatch}/>
+            <ThreadForm 
+              dispatch={threadDispatch}
+              selectedRow={selectedRowData}
+            />
           </Grid>
         </Grid>
       </Grid>

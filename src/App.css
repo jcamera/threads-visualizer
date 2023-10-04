@@ -21,6 +21,6 @@ form {
   padding: 16px 24px;
 }
 
-.MuiButton-root.submitButton {
+.MuiButton-root.formButton {
   margin: 16px 0 0 8px;
 }
