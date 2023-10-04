@@ -10,14 +10,14 @@ import AddIcon from '@mui/icons-material/Add';
             { 
               field: 'created', 
               headerName: 'Created', 
-              width: 200, 
+              width: 150, 
               editable: true,
               type: 'dateTime',
             },
             { 
               field: 'source', 
               headerName: 'Source',
-              width: 125, 
+              width: 90, 
               editable: true,
               type: 'singleSelect',
               valueOptions: ['web', 'mobile'],
@@ -25,12 +25,12 @@ import AddIcon from '@mui/icons-material/Add';
             { 
                 field: 'content', 
                 headerName: 'Content', 
-                width: 200, 
+                width: 150, 
                 editable: true },
             { 
                 field: 'topic', 
                 headerName: 'Topic', 
-                width: 125, 
+                width: 75, 
                 editable: true 
             },
             { 

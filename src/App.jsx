@@ -2,6 +2,7 @@ import { useReducer } from 'react'
 import './App.css'
 import TableView from './TableView';
 import GraphView from './GraphView';
+import ThreadForm from './ThreadForm';
 import Grid from '@mui/material/Grid';
 
 
@@ -39,7 +40,7 @@ function threadsReducer(state, action) {
   switch (action.type) {
     case 'new': 
       return [...state, {
-        id: state.length + 1,
+        id: state.length + 1, //todo: change to guid
         ...action.data
       }];
     case 'edit':
@@ -70,8 +71,13 @@ function App() {
         <Grid item xs={12} md={12} sx={{ height: '50vh' }}>
           <GraphView data={threadState} />
         </Grid>
-        <Grid item xs={12} md={9} >
-          <TableView data={threadState} dispatch={threadDispatch}/>
+        <Grid container item spacing={2}>
+          <Grid item xs={12} md={7}>
+            <TableView data={threadState} dispatch={threadDispatch}/>
+          </Grid>
+          <Grid item xs={12} md={5}>
+            <ThreadForm dispatch={threadDispatch}/>
+          </Grid>
         </Grid>
       </Grid>
     </>
