@@ -2,68 +2,7 @@ import { DataGrid, GridActionsCellItem } from '@mui/x-data-grid';
 import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import Button from '@mui/material/Button';
 import AddIcon from '@mui/icons-material/Add';
-
-
-  function getColumns({handleDeleteClick}) {
-    return (
-        [
-            { 
-              field: 'created', 
-              headerName: 'Created', 
-              width: 150, 
-              editable: true,
-              type: 'dateTime',
-            },
-            { 
-              field: 'source', 
-              headerName: 'Source',
-              width: 90, 
-              editable: true,
-              type: 'singleSelect',
-              valueOptions: ['web', 'mobile'],
-             },
-            { 
-                field: 'content', 
-                headerName: 'Content', 
-                width: 150, 
-                editable: true },
-            { 
-                field: 'topic', 
-                headerName: 'Topic', 
-                width: 75, 
-                editable: true 
-            },
-            { 
-                field: 'numFollowers', 
-                headerName: 'Followers', 
-                width: 100, 
-                type: 'number', 
-                editable: true 
-            },
-            { 
-                field: 'numFollowing', 
-                headerName: 'Following', 
-                width: 100, 
-                type: 'number', 
-                editable: true },
-            {
-              field: 'actions',
-              type: 'actions',
-              //headerName: 'Actions',
-              width: 75,
-              cellClassName: 'actions',
-              getActions: ({ id }) => ([
-                <GridActionsCellItem
-                  icon={<DeleteIcon />}
-                  label="Delete"
-                  onClick={handleDeleteClick(id)}
-                  color="inherit"
-                />,
-              ])
-            }
-          ]
-    )
-  };
+import { getColumns } from './helpers';
 
 
 export default function TableView({data, dispatch}) {
@@ -75,7 +14,14 @@ export default function TableView({data, dispatch}) {
           })
     }
 
-    const columns = getColumns({handleDeleteClick});
+    const columns = getColumns(({ id }) => ([
+        <GridActionsCellItem
+          icon={<DeleteIcon />}
+          label="Delete"
+          onClick={handleDeleteClick(id)}
+          color="inherit"
+        />,
+      ]));
 
     const handleRowUpdate = (newRow, oldRow) => {
         console.log({newRow, oldRow});
